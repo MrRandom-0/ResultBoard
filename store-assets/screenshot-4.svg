@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 800" width="1280" height="800">
+  <!-- Browser frame -->
+  <rect width="1280" height="800" fill="#f8f9fc"/>
+  <rect width="1280" height="40" fill="#e8eaed"/>
+  <circle cx="20" cy="20" r="6" fill="#ff5f57"/>
+  <circle cx="40" cy="20" r="6" fill="#ffbd2e"/>
+  <circle cx="60" cy="20" r="6" fill="#28c940"/>
+  <rect x="80" y="6" width="200" height="28" rx="8" ry="8" fill="#ffffff"/>
+  <text x="110" y="25" font-family="Inter, -apple-system, sans-serif" font-size="11" fill="#5f6368">ResultBoard - Settings</text>
+
+  <!-- Address bar -->
+  <rect width="1280" height="36" y="40" fill="#ffffff"/>
+  <rect x="180" y="48" width="700" height="20" rx="10" ry="10" fill="#f1f3f4"/>
+  <text x="210" y="62" font-family="Inter, -apple-system, sans-serif" font-size="11" fill="#5f6368">chrome-extension://resultboard/options.html</text>
+  <line x1="0" y1="76" x2="1280" y2="76" stroke="#e0e0e0" stroke-width="1"/>
+
+  <!-- Options page content -->
+  <rect x="0" y="76" width="1280" height="724" fill="#f8f9fc"/>
+
+  <!-- Header -->
+  <g transform="translate(320, 120)">
+    <rect x="0" y="6" width="14" height="14" rx="3" ry="3" fill="#6366f1" opacity="0.9"/>
+    <rect x="16" y="6" width="14" height="14" rx="3" ry="3" fill="#6366f1" opacity="0.6"/>
+    <rect x="0" y="22" width="14" height="14" rx="3" ry="3" fill="#6366f1" opacity="0.6"/>
+    <rect x="16" y="22" width="14" height="14" rx="3" ry="3" fill="#6366f1" opacity="0.4"/>
+    <text x="42" y="28" font-family="Inter, -apple-system, sans-serif" font-size="20" font-weight="700" fill="#1e1b4b">ResultBoard Settings</text>
+  </g>
+
+  <!-- Settings card container -->
+  <g transform="translate(320, 180)">
+    <rect x="0" y="0" width="640" height="560" rx="12" ry="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+
+    <!-- Appearance section -->
+    <text x="32" y="40" font-family="Inter, -apple-system, sans-serif" font-size="15" font-weight="600" fill="#1e1b4b">Appearance</text>
+    <line x1="32" y1="56" x2="608" y2="56" stroke="#f1f5f9" stroke-width="1"/>
+
+    <!-- Theme toggle -->
+    <text x="32" y="88" font-family="Inter, -apple-system, sans-serif" font-size="13" fill="#374151">Theme</text>
+    <text x="32" y="106" font-family="Inter, -apple-system, sans-serif" font-size="11" fill="#9ca3af">Choose your preferred appearance</text>
+    <g transform="translate(440, 72)">
+      <rect x="0" y="0" width="64" height="30" rx="6" ry="6" fill="#6366f1"/>
+      <text x="12" y="20" font-family="Inter, -apple-system, sans-serif" font-size="11" font-weight="500" fill="white">Light</text>
+      <rect x="68" y="0" width="56" height="30" rx="6" ry="6" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+      <text x="80" y="20" font-family="Inter, -apple-system, sans-serif" font-size="11" font-weight="500" fill="#64748b">Dark</text>
+      <rect x="128" y="0" width="56" height="30" rx="6" ry="6" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+      <text x="138" y="20" font-family="Inter, -apple-system, sans-serif" font-size="11" font-weight="500" fill="#64748b">Auto</text>
+    </g>
+
+    <!-- Density -->
+    <text x="32" y="148" font-family="Inter, -apple-system, sans-serif" font-size="13" fill="#374151">Density</text>
+    <text x="32" y="166" font-family="Inter, -apple-system, sans-serif" font-size="11" fill="#9ca3af">Adjust the spacing of interface elements</text>
+    <g transform="translate(440, 132)">
+      <rect x="0" y="0" width="76" height="30" rx="6" ry="6" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+      <text x="10" y="20" font-family="Inter, -apple-system, sans-serif" font-size="11" font-weight="500" fill="#64748b">Compact</text>
+      <rect x="80" y="0" width="76" height="30" rx="6" ry="6" fill="#6366f1"/>
+      <text x="93" y="20" font-family="Inter, -apple-system, sans-serif" font-size="11" font-weight="500" fill="white">Default</text>
+      <rect x="160" y="0" width="76" height="30" rx="6" ry="6" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+      <text x="175" y="20" font-family="Inter, -apple-system, sans-serif" font-size="11" font-weight="500" fill="#64748b">Relaxed</text>
+    </g>
+
+    <!-- Behavior section -->
+    <text x="32" y="226" font-family="Inter, -apple-system, sans-serif" font-size="15" font-weight="600" fill="#1e1b4b">Behavior</text>
+    <line x1="32" y1="242" x2="608" y2="242" stroke="#f1f5f9" stroke-width="1"/>
+
+    <!-- Auto-open toggle -->
+    <text x="32" y="274" font-family="Inter, -apple-system, sans-serif" font-size="13" fill="#374151">Auto-open side panel</text>
+    <text x="32" y="292" font-family="Inter, -apple-system, sans-serif" font-size="11" fill="#9ca3af">Automatically open the panel on Google searches</text>
+    <!-- Toggle switch on -->
+    <g transform="translate(560, 262)">
+      <rect x="0" y="0" width="44" height="24" rx="12" ry="12" fill="#6366f1"/>
+      <circle cx="32" cy="12" r="9" fill="white"/>
+    </g>
+
+    <!-- Keyboard shortcuts -->
+    <text x="32" y="334" font-family="Inter, -apple-system, sans-serif" font-size="13" fill="#374151">Keyboard navigation</text>
+    <text x="32" y="352" font-family="Inter, -apple-system, sans-serif" font-size="11" fill="#9ca3af">Enable j/k navigation through search results</text>
+    <!-- Toggle switch off -->
+    <g transform="translate(560, 322)">
+      <rect x="0" y="0" width="44" height="24" rx="12" ry="12" fill="#e2e8f0"/>
+      <circle cx="12" cy="12" r="9" fill="white"/>
+    </g>
+
+    <!-- Data Management section -->
+    <text x="32" y="404" font-family="Inter, -apple-system, sans-serif" font-size="15" font-weight="600" fill="#1e1b4b">Data Management</text>
+    <line x1="32" y1="420" x2="608" y2="420" stroke="#f1f5f9" stroke-width="1"/>
+
+    <!-- Export -->
+    <text x="32" y="452" font-family="Inter, -apple-system, sans-serif" font-size="13" fill="#374151">Export research data</text>
+    <text x="32" y="470" font-family="Inter, -apple-system, sans-serif" font-size="11" fill="#9ca3af">Download all your classified results as JSON</text>
+    <g transform="translate(510, 440)">
+      <rect x="0" y="0" width="94" height="32" rx="6" ry="6" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+      <text x="18" y="21" font-family="Inter, -apple-system, sans-serif" font-size="12" font-weight="500" fill="#374151">Export</text>
+    </g>
+
+    <!-- Clear data -->
+    <text x="32" y="512" font-family="Inter, -apple-system, sans-serif" font-size="13" fill="#374151">Clear all data</text>
+    <text x="32" y="530" font-family="Inter, -apple-system, sans-serif" font-size="11" fill="#9ca3af">Permanently delete all saved results and settings</text>
+    <g transform="translate(510, 500)">
+      <rect x="0" y="0" width="94" height="32" rx="6" ry="6" fill="#fef2f2" stroke="#fecaca" stroke-width="1"/>
+      <text x="22" y="21" font-family="Inter, -apple-system, sans-serif" font-size="12" font-weight="500" fill="#ef4444">Clear</text>
+    </g>
+  </g>
+</svg>

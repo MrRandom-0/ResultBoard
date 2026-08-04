@@ -1,0 +1,2 @@
+import { SearchX } from 'lucide-react';
+export function EmptyState({ filtered = false }: { filtered?: boolean }) { return <div className="empty"><div className="empty-icon"><SearchX size={24} /></div><h2>{filtered ? 'No results match' : 'Your board is ready'}</h2><p>{filtered ? 'Try clearing a filter or using a broader search.' : 'Search on Google, then choose Keep, Maybe, or Reject beside any organic result.'}</p></div>; }

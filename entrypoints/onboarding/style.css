@@ -1,0 +1,20 @@
+body{display:grid;min-height:100vh;place-items:center;padding:24px;background:var(--gradient-surface)}
+main{position:relative;width:min(540px,100%);padding:28px;border:1px solid var(--glass-border);border-radius:20px;background:var(--glass-bg);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--shadow-xl)}
+main::before{content:'';position:absolute;inset:-1px;border-radius:20px;padding:1px;background:var(--gradient-border);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;opacity:.5}
+header{display:flex;justify-content:space-between;color:var(--muted)}
+.progress{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin:24px 0}
+.progress i{height:3.5px;border-radius:3px;background:var(--border);transition:background var(--transition-normal)}
+.progress i.active{background:var(--gradient-primary)}
+section{text-align:center;padding:20px 24px 28px;animation:fade-in var(--transition-normal) both}
+.art{display:grid;width:92px;height:92px;margin:auto;place-items:center;border-radius:28px;background:var(--gradient-accent-soft);color:var(--accent);box-shadow:var(--shadow-md);position:relative;overflow:hidden}
+.art::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 30%,rgba(99,102,241,.2),transparent 60%)}
+.art.done{border-radius:50%;background:var(--gradient-primary);color:white;box-shadow:0 4px 16px rgba(99,102,241,.3)}
+.art.done::after{background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.2),transparent 60%)}
+h1{margin:22px 0 8px;font-size:25px;letter-spacing:var(--tracking-tight);font-weight:700}
+section>p{max-width:410px;margin:auto;color:var(--muted)}
+section label{display:block;max-width:330px;margin:22px auto 5px;text-align:left}
+section input{margin-top:6px}
+section small{color:var(--muted)}
+footer{display:flex;justify-content:space-between;margin-top:14px}
+footer .button{display:flex;align-items:center;gap:7px}
+button:disabled{opacity:.45;cursor:not-allowed}

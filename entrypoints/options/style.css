@@ -1,0 +1,52 @@
+body{padding:36px 20px}
+main{max-width:720px;margin:auto}
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
+header>span{color:var(--muted)}
+section{margin-bottom:16px;padding:20px;border:1px solid var(--glass-border);border-radius:15px;background:var(--glass-bg);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--shadow-sm);transition:box-shadow var(--transition-fast)}
+section:hover{box-shadow:var(--shadow-md)}
+h2{margin:0 0 14px;font-size:15px;letter-spacing:var(--tracking-tight);font-weight:700}
+.setting{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:12px 0;border-top:1px solid var(--border);transition:background var(--transition-fast)}
+.setting:first-of-type{border-top:0}
+.setting:hover{background:var(--surface-hover);margin:0 -12px;padding:12px 12px;border-radius:8px}
+.setting p,.privacy p{margin:2px 0;color:var(--muted);font-size:12px}
+.setting select{width:150px}
+.setting input[type="number"]{width:100px;padding:6px 10px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-size:13px;transition:border-color var(--transition-fast)}
+.setting input[type="number"]:focus{outline:none;border-color:var(--accent)}
+.privacy{display:flex;gap:12px;padding:14px;border-radius:11px;background:var(--gradient-accent-soft);color:var(--accent);border:1px solid var(--glass-border)}
+.privacy p{color:var(--text)}
+.toggle{display:flex;align-items:center;justify-content:space-between;margin-top:16px}
+.toggle span{display:flex;flex-direction:column}
+.toggle small{color:var(--muted);font-weight:400}
+.toggle input{width:18px;height:18px;accent-color:var(--accent)}
+.action-row{display:flex;flex-wrap:wrap;gap:8px}
+.action-row .button{display:flex;align-items:center;gap:6px}
+.badge{display:inline-block;padding:2px 8px;font-size:11px;font-weight:600;border-radius:4px;background:var(--gradient-accent-soft);color:var(--accent)}
+.plan-badge{text-transform:capitalize}
+
+/* Color swatch picker */
+.color-swatches{display:flex;flex-wrap:wrap;gap:10px;padding:4px 0}
+.color-swatch{width:32px;height:32px;border-radius:50%;border:3px solid transparent;cursor:pointer;transition:transform var(--transition-fast),border-color var(--transition-fast),box-shadow var(--transition-fast);position:relative}
+.color-swatch:hover{transform:scale(1.15);box-shadow:var(--shadow-md)}
+.color-swatch.active{border-color:var(--text);box-shadow:0 0 0 2px var(--surface),0 0 0 4px currentColor}
+.color-swatch::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:12px;height:12px;border-radius:50%;background:white;opacity:0;transition:opacity var(--transition-fast)}
+.color-swatch.active::after{opacity:0.4}
+
+/* Font size preview */
+.font-size-preview{display:inline-block;padding:4px 10px;border-radius:6px;background:var(--surface-hover);font-weight:500;margin-left:8px;color:var(--accent);font-size:12px}
+
+/* Developer mode badge */
+.dev-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;border-radius:4px;background:linear-gradient(135deg,#f59e0b 0%,#ef4444 100%);color:#fff}
+
+/* Section icons */
+.section-title{display:flex;align-items:center;gap:8px}
+.section-title svg{color:var(--accent);opacity:0.8}
+.section-copy{margin:-8px 0 14px;color:var(--muted);font-size:12px}
+.criteria-list{display:grid;gap:8px}
+.criterion-setting{display:grid;grid-template-columns:1fr 92px 36px;align-items:center;gap:8px}
+.criterion-setting label{display:flex;align-items:center;gap:4px;color:var(--muted)}
+.criterion-setting label input{width:68px}
+.criterion-create{display:grid;grid-template-columns:1fr 92px auto;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.criterion-create input[type="number"]{width:92px}
+
+footer{text-align:center;color:var(--muted);font-size:11px}
+@media(max-width:560px){body{padding:20px 12px}.setting{align-items:start;flex-direction:column}.setting select{width:100%}.setting input[type="number"]{width:100%}.color-swatches{gap:8px}.criterion-setting,.criterion-create{grid-template-columns:1fr 76px auto}}

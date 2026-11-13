@@ -21,7 +21,11 @@ export class ResultBoardRepository {
     return migrateDatabase(await this.driver.get(STORAGE_KEY));
   }
 
-  private async mutate(operation: (state: StoredDatabase) => void): Promise<StoredDatabase> {
+  // `action` optionally labels the mutation (e.g. 'DELETE_ALL') for callers that
+  // name their operations after the message that triggered them. It is accepted
+  // for diagnostics/future history use; mutate itself does not act on it.
+  private async mutate(operation: (state: StoredDatabase) => void, action?: string): Promise<StoredDatabase> {
+    void action;
     let result: StoredDatabase | undefined;
     const task = this.queue.then(async () => {
       const state = await this.getState();

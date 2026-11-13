@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { filterRecords, sortRecords } from '../../src/utils/records';
+import { filterRecords, sortRecords, findDuplicateGroups, duplicateRecordIds } from '../../src/utils/records';
 import type { SearchResultRecord } from '../../src/models/types';
 
 function makeRecord(overrides: Partial<SearchResultRecord> = {}): SearchResultRecord {
@@ -152,5 +152,65 @@ describe('sortRecords', () => {
     const original = [...records];
     sortRecords(records, 'newest');
     expect(records).toEqual(original);
+  });
+});
+
+describe('findDuplicateGroups', () => {
+  it('returns no groups when every URL is saved once', () => {
+    const records = [
+      makeRecord({ id: '1', canonicalUrl: 'https://a.com/1' }),
+      makeRecord({ id: '2', canonicalUrl: 'https://a.com/2' }),
+    ];
+    expect(findDuplicateGroups(records)).toEqual([]);
+  });
+
+  it('groups records sharing a canonical URL in the same project', () => {
+    const records = [
+      makeRecord({ id: 'new', canonicalUrl: 'https://a.com/x', createdAt: '2024-02-01T00:00:00.000Z' }),
+      makeRecord({ id: 'old', canonicalUrl: 'https://a.com/x', createdAt: '2024-01-01T00:00:00.000Z' }),
+      makeRecord({ id: 'other', canonicalUrl: 'https://a.com/y' }),
+    ];
+    const groups = findDuplicateGroups(records);
+    expect(groups).toHaveLength(1);
+    expect(groups[0]!.keeper.id).toBe('old');
+    expect(groups[0]!.duplicates.map((r) => r.id)).toEqual(['new']);
+  });
+
+  it('keeps the earliest copy and lists the rest oldest-first', () => {
+    const records = [
+      makeRecord({ id: 'c', createdAt: '2024-03-01T00:00:00.000Z' }),
+      makeRecord({ id: 'a', createdAt: '2024-01-01T00:00:00.000Z' }),
+      makeRecord({ id: 'b', createdAt: '2024-02-01T00:00:00.000Z' }),
+    ];
+    const [group] = findDuplicateGroups(records);
+    expect(group!.keeper.id).toBe('a');
+    expect(group!.duplicates.map((r) => r.id)).toEqual(['b', 'c']);
+  });
+
+  it('does not group the same URL across different projects', () => {
+    const records = [
+      makeRecord({ id: '1', projectId: 'proj-1' }),
+      makeRecord({ id: '2', projectId: 'proj-2' }),
+    ];
+    expect(findDuplicateGroups(records)).toEqual([]);
+  });
+
+  it('breaks createdAt ties deterministically by id', () => {
+    const records = [
+      makeRecord({ id: 'z', createdAt: '2024-01-01T00:00:00.000Z' }),
+      makeRecord({ id: 'a', createdAt: '2024-01-01T00:00:00.000Z' }),
+    ];
+    const [group] = findDuplicateGroups(records);
+    expect(group!.keeper.id).toBe('a');
+    expect(group!.duplicates.map((r) => r.id)).toEqual(['z']);
+  });
+
+  it('duplicateRecordIds returns only the removable copies', () => {
+    const records = [
+      makeRecord({ id: 'keep-1', createdAt: '2024-01-01T00:00:00.000Z' }),
+      makeRecord({ id: 'dup-1', createdAt: '2024-02-01T00:00:00.000Z' }),
+      makeRecord({ id: 'solo', canonicalUrl: 'https://other.com/page' }),
+    ];
+    expect(duplicateRecordIds(records)).toEqual(['dup-1']);
   });
 });

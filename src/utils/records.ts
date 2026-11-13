@@ -32,6 +32,51 @@ export function sortRecords(records: SearchResultRecord[], sort: SortKey): Searc
   });
 }
 
+export interface DuplicateGroup {
+  projectId: string;
+  canonicalUrl: string;
+  /** The record that survives cleanup: the earliest saved copy. */
+  keeper: SearchResultRecord;
+  /** Later copies of the same URL, oldest first. Safe to remove. */
+  duplicates: SearchResultRecord[];
+}
+
+/**
+ * Find records that save the same canonical URL more than once in a project.
+ *
+ * Classifying from a search page already dedupes by canonical URL, but a
+ * merge import matches records by id, so importing a board exported from
+ * another profile (where the same URL has a different id) can leave true
+ * duplicates behind. The earliest copy is the keeper because classify
+ * refreshes it in place and accumulates its source queries.
+ */
+export function findDuplicateGroups(records: SearchResultRecord[]): DuplicateGroup[] {
+  const byKey = new Map<string, SearchResultRecord[]>();
+  for (const record of records) {
+    const key = `${record.projectId}\n${record.canonicalUrl}`;
+    const group = byKey.get(key);
+    if (group) group.push(record);
+    else byKey.set(key, [record]);
+  }
+  const groups: DuplicateGroup[] = [];
+  for (const group of byKey.values()) {
+    if (group.length < 2) continue;
+    const sorted = [...group].sort((a, b) => a.createdAt.localeCompare(b.createdAt) || a.id.localeCompare(b.id));
+    groups.push({
+      projectId: sorted[0]!.projectId,
+      canonicalUrl: sorted[0]!.canonicalUrl,
+      keeper: sorted[0]!,
+      duplicates: sorted.slice(1),
+    });
+  }
+  return groups.sort((a, b) => a.canonicalUrl.localeCompare(b.canonicalUrl));
+}
+
+/** Ids of every duplicate copy (never a keeper) across all groups. */
+export function duplicateRecordIds(records: SearchResultRecord[]): string[] {
+  return findDuplicateGroups(records).flatMap((group) => group.duplicates.map((record) => record.id));
+}
+
 export function groupByDomain(records: SearchResultRecord[]): Map<string, SearchResultRecord[]> {
   const groups = new Map<string, SearchResultRecord[]>();
   for (const record of records) {

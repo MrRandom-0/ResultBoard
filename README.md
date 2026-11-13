@@ -2,6 +2,20 @@
 
 ResultBoard turns Google Search results into a calm, local research board. Classify results as Keep, Maybe, or Rejected without leaving the search page, then review them in a side panel or full board.
 
+## Screenshots
+
+The full board — classified results with notes, tags and ratings:
+
+![ResultBoard full board in list view](docs/screenshots/board-list.png)
+
+The side panel — review and organise results without leaving the search page:
+
+![ResultBoard side panel](docs/screenshots/side-panel.png)
+
+Settings in dark mode with a rose accent — themes, accent colours, density and font size are all yours:
+
+![ResultBoard settings in dark mode with rose accent](docs/screenshots/options-dark.png)
+
 ## Features
 
 - Unlimited local projects with archive and restore

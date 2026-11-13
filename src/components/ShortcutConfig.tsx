@@ -8,7 +8,7 @@ interface Props {
   onUpdate(shortcuts: KeyboardShortcuts): void;
 }
 
-const SHORTCUT_LABELS: Record<keyof KeyboardShortcuts, string> = {
+export const SHORTCUT_LABELS: Record<keyof KeyboardShortcuts, string> = {
   nextResult: 'Next result',
   prevResult: 'Previous result',
   keepResult: 'Mark as Keep',

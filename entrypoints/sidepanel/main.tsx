@@ -1,13 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BarChart3, Download, ExternalLink, Grid, List, Settings } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { BarChart3, Download, ExternalLink, Grid, Keyboard, List, ListChecks, Settings } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 import { Logo } from '../../src/components/Logo';
 import { ProjectSwitcher } from '../../src/components/ProjectSwitcher';
 import { ResultCard } from '../../src/components/ResultCard';
 import { FilterBar } from '../../src/components/FilterBar';
 import { EmptyState } from '../../src/components/EmptyState';
 import { ComparisonView } from '../../src/components/ComparisonView';
+import { BulkActionBar } from '../../src/components/BulkActionBar';
+import { ShortcutHelp } from '../../src/components/ShortcutHelp';
 import { KeyboardNavProvider, useKeyboardNav } from '../../src/components/KeyboardNav';
 import { useAppState } from '../../src/hooks/use-app-state';
 import { useTheme } from '../../src/hooks/use-theme';
@@ -28,6 +30,9 @@ function ResultList({
   compact,
   selectedIds,
   onToggleSelect,
+  selectMode,
+  bulkIds,
+  onToggleBulk,
   dispatch,
 }: {
   records: SearchResultRecord[];
@@ -36,6 +41,9 @@ function ResultList({
   compact: boolean;
   selectedIds: Set<string>;
   onToggleSelect(id: string): void;
+  selectMode: boolean;
+  bulkIds: Set<string>;
+  onToggleBulk(id: string): void;
   dispatch: ReturnType<typeof useAppState>['dispatch'];
 }) {
   const { active, focusIndex, setTotalItems } = useKeyboardNav();
@@ -51,9 +59,13 @@ function ResultList({
       {records.map((record, index) => (
         <div
           key={record.id}
-          className={`result-item ${selectedIds.has(record.id) ? 'selected' : ''} ${active && focusIndex === index ? 'keyboard-focused' : ''}`}
+          className={`result-item ${(selectMode ? bulkIds : selectedIds).has(record.id) ? 'selected' : ''} ${active && focusIndex === index ? 'keyboard-focused' : ''}`}
           onClick={(e) => {
-            if (e.ctrlKey || e.metaKey) {
+            if (selectMode) {
+              if (!(e.target as HTMLElement).closest('a, button, input, textarea, select, label')) {
+                onToggleBulk(record.id);
+              }
+            } else if (e.ctrlKey || e.metaKey) {
               onToggleSelect(record.id);
             }
           }}
@@ -62,8 +74,9 @@ function ResultList({
             record={record}
             tags={tags}
             compact={compact}
-            selected={selectedIds.has(record.id)}
-            onToggleSelect={() => onToggleSelect(record.id)}
+            selected={(selectMode ? bulkIds : selectedIds).has(record.id)}
+            onToggleSelect={() => (selectMode ? onToggleBulk(record.id) : onToggleSelect(record.id))}
+            selectionPurpose={selectMode ? 'bulk actions' : 'comparison'}
             onUpdate={(patch) => dispatch({ type: 'UPDATE_RECORD', recordId: record.id, patch })}
             onRemove={() => dispatch({ type: 'REMOVE_RECORD', recordId: record.id })}
           />
@@ -81,6 +94,9 @@ function App() {
   const [sort, setSort] = useState<SortKey>('newest');
   const [view, setView] = useState<ViewMode>('list');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [selectMode, setSelectMode] = useState(false);
+  const [bulkIds, setBulkIds] = useState<Set<string>>(new Set());
+  const [showHelp, setShowHelp] = useState(false);
   const [projectName, setProjectName] = useState('My research');
   useTheme(state?.settings.theme, state?.settings.fontSize, state?.settings.accentColor, state?.settings.animationSpeed);
 
@@ -112,6 +128,37 @@ function App() {
       }
       return next;
     });
+  };
+
+  const activeProjectId = state?.activeProjectId;
+  useEffect(() => {
+    setBulkIds(new Set());
+    setSelectMode(false);
+  }, [activeProjectId]);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== '?') return;
+      const target = event.target as HTMLElement;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT' || target.isContentEditable) return;
+      setShowHelp(true);
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, []);
+
+  const toggleBulk = (id: string) => {
+    setBulkIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else if (next.size < 500) next.add(id);
+      return next;
+    });
+  };
+
+  const exitSelectMode = () => {
+    setSelectMode(false);
+    setBulkIds(new Set());
   };
 
   const handleClassify = (index: number, status: ResultStatus) => {
@@ -169,6 +216,14 @@ function App() {
               }}
             >
               <Download size={16} />
+            </button>
+            <button
+              className="icon-button"
+              title="Keyboard shortcuts (?)"
+              aria-label="Keyboard shortcuts"
+              onClick={() => setShowHelp(true)}
+            >
+              <Keyboard size={16} />
             </button>
             <button
               className="icon-button"
@@ -263,9 +318,19 @@ function App() {
                 <button
                   className={view === 'comparison' ? 'active' : ''}
                   aria-label="Compare"
-                  onClick={() => setView('comparison')}
+                  onClick={() => { exitSelectMode(); setView('comparison'); }}
                 >
                   <BarChart3 size={15} />
+                </button>
+                <button
+                  className={selectMode ? 'active' : ''}
+                  aria-label="Select results for bulk actions"
+                  aria-pressed={selectMode}
+                  title="Select results for bulk actions"
+                  disabled={view === 'comparison'}
+                  onClick={() => (selectMode ? exitSelectMode() : setSelectMode(true))}
+                >
+                  <ListChecks size={15} />
                 </button>
               </div>
             </section>
@@ -278,7 +343,19 @@ function App() {
               )}
             </div>
 
-            {selectedIds.size > 0 && view !== 'comparison' && (
+            {selectMode && view !== 'comparison' ? (
+              <BulkActionBar
+                count={bulkIds.size}
+                visibleCount={visible.length}
+                tags={projectTags}
+                onClassify={(status) => { const ids = [...bulkIds]; if (ids.length) void dispatch({ type: 'BULK_CLASSIFY', recordIds: ids, status }); }}
+                onTag={(tagId, mode) => { const ids = [...bulkIds]; if (ids.length) void dispatch({ type: 'BULK_UPDATE_TAGS', recordIds: ids, tagIds: [tagId], mode }); }}
+                onRemove={() => { const ids = [...bulkIds]; if (ids.length) { void dispatch({ type: 'BULK_REMOVE_RECORDS', recordIds: ids }); setBulkIds(new Set()); } }}
+                onSelectAllVisible={() => setBulkIds(new Set(visible.slice(0, 500).map((record) => record.id)))}
+                onClear={() => setBulkIds(new Set())}
+                onDone={exitSelectMode}
+              />
+            ) : selectedIds.size > 0 && view !== 'comparison' && (
               <div className="compare-hint">
                 {selectedIds.size} selected (max 4)
                 <button
@@ -310,11 +387,15 @@ function App() {
                 compact={state.settings.density === 'compact'}
                 selectedIds={selectedIds}
                 onToggleSelect={toggleSelect}
+                selectMode={selectMode}
+                bulkIds={bulkIds}
+                onToggleBulk={toggleBulk}
                 dispatch={dispatch}
               />
             )}
           </>
         )}
+        <ShortcutHelp open={showHelp} shortcuts={state.settings.shortcuts} onClose={() => setShowHelp(false)} />
       </main>
     </KeyboardNavProvider>
   );

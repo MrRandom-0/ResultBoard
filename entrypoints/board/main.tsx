@@ -7,10 +7,13 @@ import {
   BarChart3,
   ChevronDown,
   ChevronRight,
+  CopyCheck,
   Download,
   FolderPlus,
   Grid,
+  Keyboard,
   List,
+  ListChecks,
   Plus,
 } from 'lucide-react';
 import { Logo } from '../../src/components/Logo';
@@ -18,10 +21,13 @@ import { ResultCard } from '../../src/components/ResultCard';
 import { FilterBar } from '../../src/components/FilterBar';
 import { EmptyState } from '../../src/components/EmptyState';
 import { ComparisonView } from '../../src/components/ComparisonView';
+import { BulkActionBar } from '../../src/components/BulkActionBar';
+import { ShortcutHelp } from '../../src/components/ShortcutHelp';
+import { DuplicatesDialog } from '../../src/components/DuplicatesDialog';
 import { KeyboardNavProvider, useKeyboardNav } from '../../src/components/KeyboardNav';
 import { useAppState } from '../../src/hooks/use-app-state';
 import { useTheme } from '../../src/hooks/use-theme';
-import { filterRecords, sortRecords, type RecordFilters, type SortKey } from '../../src/utils/records';
+import { filterRecords, findDuplicateGroups, sortRecords, type RecordFilters, type SortKey } from '../../src/utils/records';
 import { downloadText, recordsToCsv } from '../../src/utils/csv';
 import { recordsToJson, recordsToMarkdown, recordsToHtml } from '../../src/utils/export';
 import type { ResultStatus, SearchResultRecord, Tag } from '../../src/models/types';
@@ -38,6 +44,9 @@ function BoardContent({
   tags,
   selectedIds,
   onToggleSelect,
+  selectMode,
+  bulkIds,
+  onToggleBulk,
   onUpdate,
   onRemove,
 }: {
@@ -47,6 +56,9 @@ function BoardContent({
   tags: Tag[];
   selectedIds: Set<string>;
   onToggleSelect(id: string): void;
+  selectMode: boolean;
+  bulkIds: Set<string>;
+  onToggleBulk(id: string): void;
   onUpdate(id: string, patch: { status?: ResultStatus; notes?: string; tagIds?: string[]; criterionScores?: Record<string, number> }): Promise<unknown>;
   onRemove(id: string): Promise<unknown>;
 }) {
@@ -64,9 +76,15 @@ function BoardContent({
       {records.map((record, index) => (
         <div
           key={record.id}
-          className={`board-item ${selectedIds.has(record.id) ? 'selected' : ''} ${active && focusIndex === index ? 'keyboard-focused' : ''}`}
+          className={`board-item ${(selectMode ? bulkIds : selectedIds).has(record.id) ? 'selected' : ''} ${active && focusIndex === index ? 'keyboard-focused' : ''}`}
           onClick={(e) => {
-            if (e.ctrlKey || e.metaKey) {
+            if (selectMode) {
+              // Whole-card toggle, except when the click lands on a control
+              // or link inside the card (those keep their own behaviour).
+              if (!(e.target as HTMLElement).closest('a, button, input, textarea, select, label')) {
+                onToggleBulk(record.id);
+              }
+            } else if (e.ctrlKey || e.metaKey) {
               onToggleSelect(record.id);
             }
           }}
@@ -75,8 +93,9 @@ function BoardContent({
             record={record}
             tags={tags}
             compact={compact}
-            selected={selectedIds.has(record.id)}
-            onToggleSelect={() => onToggleSelect(record.id)}
+            selected={(selectMode ? bulkIds : selectedIds).has(record.id)}
+            onToggleSelect={() => (selectMode ? onToggleBulk(record.id) : onToggleSelect(record.id))}
+            selectionPurpose={selectMode ? 'bulk actions' : 'comparison'}
             onUpdate={(patch) => onUpdate(record.id, patch)}
             onRemove={() => onRemove(record.id)}
           />
@@ -94,6 +113,10 @@ function App() {
   const [sort, setSort] = useState<SortKey>('newest');
   const [showArchived, setShowArchived] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [selectMode, setSelectMode] = useState(false);
+  const [bulkIds, setBulkIds] = useState<Set<string>>(new Set());
+  const [showHelp, setShowHelp] = useState(false);
+  const [showDuplicates, setShowDuplicates] = useState(false);
   const [showExportMenu, setShowExportMenu] = useState(false);
   const [creatingProject, setCreatingProject] = useState(false);
   const [projectName, setProjectName] = useState('');
@@ -143,6 +166,44 @@ function App() {
 
   const visible = sortRecords(filterRecords(projectRecords, filters), sort);
   const selectedRecords = visible.filter((r) => selectedIds.has(r.id));
+  const duplicateGroups = useMemo(() => findDuplicateGroups(projectRecords), [projectRecords]);
+  const duplicateCount = duplicateGroups.reduce((sum, group) => sum + group.duplicates.length, 0);
+
+  // Bulk selection belongs to one project and one mode; reset both whenever
+  // the user switches project.
+  const activeProjectId = state?.activeProjectId;
+  useEffect(() => {
+    setBulkIds(new Set());
+    setSelectMode(false);
+  }, [activeProjectId]);
+
+  // "?" opens the shortcut help from anywhere outside a text field.
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== '?') return;
+      const target = event.target as HTMLElement;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT' || target.isContentEditable) return;
+      setShowHelp(true);
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, []);
+
+  const toggleBulk = (id: string) => {
+    setBulkIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else if (next.size < 500) next.add(id);
+      return next;
+    });
+  };
+
+  const bulkIdsList = () => [...bulkIds];
+
+  const exitSelectMode = () => {
+    setSelectMode(false);
+    setBulkIds(new Set());
+  };
 
   const handleClassify = (index: number, status: ResultStatus) => {
     const record = visible[index];
@@ -300,6 +361,7 @@ function App() {
               <button
                 className={view === 'comparison' ? 'active' : ''}
                 onClick={() => {
+                  exitSelectMode();
                   setView('comparison');
                 }}
                 aria-label="Comparison view"
@@ -307,6 +369,37 @@ function App() {
                 <BarChart3 size={14} /> Compare
               </button>
             </div>
+
+            <button
+              className="icon-button"
+              title="Select results for bulk actions"
+              aria-label="Select results for bulk actions"
+              aria-pressed={selectMode}
+              disabled={!active || view === 'comparison'}
+              onClick={() => (selectMode ? exitSelectMode() : setSelectMode(true))}
+            >
+              <ListChecks size={16} />
+            </button>
+
+            {duplicateCount > 0 && (
+              <button
+                className="icon-button"
+                title={`Clean up ${duplicateCount} duplicate result${duplicateCount !== 1 ? 's' : ''}`}
+                aria-label={`Clean up ${duplicateCount} duplicate results`}
+                onClick={() => setShowDuplicates(true)}
+              >
+                <CopyCheck size={16} />
+              </button>
+            )}
+
+            <button
+              className="icon-button"
+              title="Keyboard shortcuts (?)"
+              aria-label="Keyboard shortcuts"
+              onClick={() => setShowHelp(true)}
+            >
+              <Keyboard size={16} />
+            </button>
 
             <div ref={exportRef} className="export-dropdown">
               <button
@@ -355,7 +448,19 @@ function App() {
                 }
               />
 
-              {selectedIds.size > 0 && view !== 'comparison' && (
+              {selectMode && view !== 'comparison' ? (
+                <BulkActionBar
+                  count={bulkIds.size}
+                  visibleCount={visible.length}
+                  tags={projectTags}
+                  onClassify={(status) => { const ids = bulkIdsList(); if (ids.length) void dispatch({ type: 'BULK_CLASSIFY', recordIds: ids, status }); }}
+                  onTag={(tagId, mode) => { const ids = bulkIdsList(); if (ids.length) void dispatch({ type: 'BULK_UPDATE_TAGS', recordIds: ids, tagIds: [tagId], mode }); }}
+                  onRemove={() => { const ids = bulkIdsList(); if (ids.length) { void dispatch({ type: 'BULK_REMOVE_RECORDS', recordIds: ids }); setBulkIds(new Set()); } }}
+                  onSelectAllVisible={() => setBulkIds(new Set(visible.slice(0, 500).map((record) => record.id)))}
+                  onClear={() => setBulkIds(new Set())}
+                  onDone={exitSelectMode}
+                />
+              ) : selectedIds.size > 0 && view !== 'comparison' && (
                 <div className="comparison-select-hint">
                   {selectedIds.size} result{selectedIds.size !== 1 ? 's' : ''} selected (max 4)
                   <button
@@ -387,6 +492,9 @@ function App() {
                   tags={state.tags}
                   selectedIds={selectedIds}
                   onToggleSelect={toggleSelect}
+                  selectMode={selectMode}
+                  bulkIds={bulkIds}
+                  onToggleBulk={toggleBulk}
                   onUpdate={(id, patch) => dispatch({ type: 'UPDATE_RECORD', recordId: id, patch })}
                   onRemove={(id) => dispatch({ type: 'REMOVE_RECORD', recordId: id })}
                 />
@@ -394,6 +502,13 @@ function App() {
             </>
           )}
         </div>
+        <ShortcutHelp open={showHelp} shortcuts={state.settings.shortcuts} onClose={() => setShowHelp(false)} />
+        <DuplicatesDialog
+          open={showDuplicates}
+          groups={duplicateGroups}
+          onRemoveIds={(ids) => dispatch({ type: 'BULK_REMOVE_RECORDS', recordIds: ids })}
+          onClose={() => setShowDuplicates(false)}
+        />
       </main>
     </KeyboardNavProvider>
   );

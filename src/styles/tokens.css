@@ -29,22 +29,26 @@
   --success: #059669;
   --success-soft: #d1fae5;
 
-  /* Gradients */
+  /* Gradients - derived from the active accent so custom accents stay coherent */
   --gradient-primary: linear-gradient(135deg, var(--accent) 0%, color-mix(in srgb, var(--accent) 74%, #a855f7) 58%, color-mix(in srgb, var(--accent) 58%, #fff) 100%);
-  --gradient-surface: linear-gradient(135deg, rgba(99, 102, 241, 0.03) 0%, rgba(139, 92, 246, 0.06) 100%);
-  --gradient-accent-soft: linear-gradient(135deg, #eef2ff 0%, #ede9fe 100%);
-  --gradient-border: linear-gradient(135deg, #6366f1, #a78bfa);
+  --gradient-surface: linear-gradient(135deg, color-mix(in srgb, var(--accent) 4%, #fff) 0%, color-mix(in srgb, var(--accent) 8%, #fff) 100%);
+  --gradient-accent-soft: linear-gradient(135deg, color-mix(in srgb, var(--accent) 8%, #fff) 0%, color-mix(in srgb, color-mix(in srgb, var(--accent) 72%, #a855f7) 14%, #fff) 100%);
+  --gradient-border: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 55%, #a78bfa));
 
   /* Glass */
   --glass-bg: rgba(255, 255, 255, 0.72);
-  --glass-border: rgba(99, 102, 241, 0.12);
+  --glass-border: color-mix(in srgb, var(--accent) 13%, transparent);
   --glass-blur: blur(12px);
 
-  /* Shadows - layered system with colored tints */
-  --shadow-sm: 0 1px 2px rgba(30, 27, 75, 0.04), 0 1px 3px rgba(99, 102, 241, 0.04);
-  --shadow-md: 0 4px 6px rgba(30, 27, 75, 0.04), 0 2px 8px rgba(99, 102, 241, 0.06);
-  --shadow-lg: 0 10px 25px rgba(30, 27, 75, 0.06), 0 4px 12px rgba(99, 102, 241, 0.08);
-  --shadow-xl: 0 20px 50px rgba(30, 27, 75, 0.08), 0 8px 24px rgba(99, 102, 241, 0.1);
+  /* Focus ring - follows the active accent */
+  --ring: color-mix(in srgb, var(--accent) 16%, transparent);
+  --ring-strong: color-mix(in srgb, var(--accent) 30%, transparent);
+
+  /* Shadows - layered system; neutral layer from text ink, tint from accent */
+  --shadow-sm: 0 1px 2px color-mix(in srgb, var(--text) 5%, transparent), 0 1px 3px color-mix(in srgb, var(--accent) 5%, transparent);
+  --shadow-md: 0 4px 6px color-mix(in srgb, var(--text) 5%, transparent), 0 2px 8px color-mix(in srgb, var(--accent) 7%, transparent);
+  --shadow-lg: 0 10px 25px color-mix(in srgb, var(--text) 7%, transparent), 0 4px 12px color-mix(in srgb, var(--accent) 9%, transparent);
+  --shadow-xl: 0 20px 50px color-mix(in srgb, var(--text) 9%, transparent), 0 8px 24px color-mix(in srgb, var(--accent) 11%, transparent);
   --shadow: var(--shadow-lg);
 
   /* Typography */
@@ -65,9 +69,25 @@
   /* Animation speed multiplier (1 = normal, 0.5 = reduced, 0 = none) */
   --animation-speed: 1;
 
+  /* Spacing scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+
+  /* Radius scale */
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-pill: 999px;
+
   /* Layout */
   --grid-gap: 12px;
-  --card-radius: 14px;
+  --card-radius: var(--radius-lg);
   --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-spring: 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -104,21 +124,25 @@
   --success: #34d399;
   --success-soft: rgba(52, 211, 153, 0.12);
 
-  /* Gradients */
+  /* Gradients - derived from the active accent so custom accents stay coherent */
   --gradient-primary: linear-gradient(135deg, var(--accent) 0%, color-mix(in srgb, var(--accent) 72%, #c084fc) 58%, color-mix(in srgb, var(--accent) 62%, #fff) 100%);
-  --gradient-surface: linear-gradient(135deg, rgba(99, 102, 241, 0.06) 0%, rgba(139, 92, 246, 0.08) 100%);
-  --gradient-accent-soft: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(139, 92, 246, 0.12) 100%);
-  --gradient-border: linear-gradient(135deg, #818cf8, #c4b5fd);
+  --gradient-surface: linear-gradient(135deg, color-mix(in srgb, var(--accent) 7%, transparent) 0%, color-mix(in srgb, var(--accent) 10%, transparent) 100%);
+  --gradient-accent-soft: linear-gradient(135deg, color-mix(in srgb, var(--accent) 17%, transparent) 0%, color-mix(in srgb, color-mix(in srgb, var(--accent) 72%, #c084fc) 13%, transparent) 100%);
+  --gradient-border: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 55%, #c4b5fd));
 
   /* Glass */
   --glass-bg: rgba(26, 26, 46, 0.78);
-  --glass-border: rgba(129, 140, 248, 0.15);
+  --glass-border: color-mix(in srgb, var(--accent) 16%, transparent);
   --glass-blur: blur(12px);
 
+  /* Focus ring - follows the active accent */
+  --ring: color-mix(in srgb, var(--accent) 22%, transparent);
+  --ring-strong: color-mix(in srgb, var(--accent) 36%, transparent);
+
   /* Shadows */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(99, 102, 241, 0.06);
-  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.25), 0 2px 6px rgba(99, 102, 241, 0.08);
-  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(99, 102, 241, 0.1);
-  --shadow-xl: 0 25px 60px rgba(0, 0, 0, 0.35), 0 8px 24px rgba(99, 102, 241, 0.12);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2), 0 1px 2px color-mix(in srgb, var(--accent) 7%, transparent);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.25), 0 2px 6px color-mix(in srgb, var(--accent) 9%, transparent);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.3), 0 4px 12px color-mix(in srgb, var(--accent) 11%, transparent);
+  --shadow-xl: 0 25px 60px rgba(0, 0, 0, 0.35), 0 8px 24px color-mix(in srgb, var(--accent) 13%, transparent);
   --shadow: var(--shadow-lg);
 }

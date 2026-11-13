@@ -11,10 +11,10 @@ main.board-page {
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border-right: 1px solid var(--glass-border);
-  padding: 20px 16px;
+  padding: var(--space-5) var(--space-4);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-4);
   overflow-y: auto;
 }
 
@@ -39,7 +39,7 @@ main.board-page {
   padding: 8px 10px;
   border: none;
   background: transparent;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   text-align: left;
   font-size: 13px;
   transition: all var(--transition-fast);
@@ -54,17 +54,16 @@ main.board-page {
   background: var(--accent-soft);
   font-weight: 600;
   color: var(--accent);
-  border-left: 3px solid var(--accent);
-  padding-left: 7px;
+  box-shadow: inset 3px 0 0 var(--accent);
 }
 
 .sidebar-project .project-count {
   margin-left: auto;
   font-size: 11px;
   color: var(--muted);
-  background: var(--border);
-  padding: 1px 6px;
-  border-radius: 8px;
+  background: color-mix(in srgb, var(--text) 7%, transparent);
+  padding: 1px 7px;
+  border-radius: var(--radius-pill);
 }
 
 .archived-toggle {
@@ -88,10 +87,10 @@ main.board-page {
 .board-header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px 24px;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-6);
   border-bottom: 1px solid var(--border);
-  background: var(--gradient-surface);
+  background: var(--surface);
 }
 
 .board-header h1 {
@@ -110,7 +109,7 @@ main.board-page {
 .view-switcher {
   display: flex;
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   overflow: hidden;
   background: var(--surface);
 }
@@ -139,31 +138,33 @@ main.board-page {
 .view-switcher button.active {
   background: var(--gradient-primary);
   color: white;
-  box-shadow: 0 1px 4px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 1px 4px var(--ring-strong);
 }
 
 .board-content {
-  padding: 20px 24px;
+  padding: var(--space-5) var(--space-6);
   overflow-y: auto;
 }
 
 .board-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 12px;
+  gap: var(--grid-gap);
+  margin-top: var(--space-4);
 }
 
 .board-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
 }
 
 .comparison-select-hint {
   padding: 12px 16px;
   background: var(--accent-soft);
   border: 1px solid var(--glass-border);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   font-size: 13px;
   margin-bottom: 16px;
   display: flex;
@@ -188,7 +189,7 @@ main.board-page {
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   box-shadow: var(--shadow-xl);
   padding: 6px;
   min-width: 160px;
@@ -203,7 +204,7 @@ main.board-page {
   padding: 8px 10px;
   border: none;
   background: transparent;
-  border-radius: 6px;
+  border-radius: var(--radius-xs);
   font-size: 13px;
   text-align: left;
   transition: background var(--transition-fast);

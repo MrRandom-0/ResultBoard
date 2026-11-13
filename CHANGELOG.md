@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- Bulk actions in the board and side panel: a select mode with a bulk bar to classify (Keep/Maybe/Reject), add or remove a tag, or remove many results at once, backed by new `BULK_UPDATE_TAGS` and `BULK_REMOVE_RECORDS` storage operations (bulk classify existed in storage but had no UI)
+- Duplicate cleanup: the board flags projects where the same URL is saved more than once (possible after a merge import) and offers a review dialog that keeps the earliest copy and removes the rest
+- Keyboard shortcut help dialog in the board and side panel (press `?` or the keyboard button), showing the currently configured bindings
+
 ## 0.3.0 - 2026-08-02
 
 ### Added

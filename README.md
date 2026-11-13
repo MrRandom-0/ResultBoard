@@ -21,6 +21,9 @@ Settings in dark mode with a rose accent — themes, accent colours, density and
 - Unlimited local projects with archive and restore
 - Keep, Maybe, and Reject controls on organic Google results
 - Notes, rejection reasons, tags, filters, sorting, and keyboard navigation
+- Bulk actions: select any number of results and classify, tag, or remove them together
+- Duplicate cleanup: find repeated saves of the same URL (e.g. after merging a backup) and remove them in one pass
+- Keyboard shortcut help built into the board and side panel — press `?`
 - List, responsive grid, and weighted comparison views
 - Per-result ratings for project-specific comparison criteria
 - Complete JSON backups with merge or replace import

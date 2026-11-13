@@ -1,6 +1,6 @@
 [data-resultboard-rejected] { opacity: .38 !important; transition: opacity .18s ease; }
 [data-resultboard-rejected]:hover, [data-resultboard-rejected]:focus-within { opacity: .72 !important; }
 [data-resultboard-hidden] { display: none !important; }
-#resultboard-toast { position: fixed; z-index: 2147483647; right: 24px; bottom: 24px; display: flex; align-items: center; gap: 14px; max-width: 360px; box-sizing: border-box; padding: 12px 14px; border: 1px solid rgba(255,255,255,.14); border-radius: 12px; background: #1f2722; color: #f7faf8; box-shadow: 0 12px 32px rgba(0,0,0,.28); font: 500 13px/1.4 system-ui, sans-serif; }
-#resultboard-toast button { border: 0; background: transparent; color: #a9d9bd; cursor: pointer; font: 700 13px system-ui; }
+#resultboard-toast { position: fixed; z-index: 2147483647; right: 24px; bottom: 24px; display: flex; align-items: center; gap: 14px; max-width: 360px; box-sizing: border-box; padding: 12px 14px; border: 1px solid rgba(255,255,255,.14); border-radius: 12px; background: #17171f; color: #f4f4f8; box-shadow: 0 12px 32px rgba(0,0,0,.28); font: 500 13px/1.4 system-ui, sans-serif; }
+#resultboard-toast button { border: 0; background: transparent; color: #a5b4fc; cursor: pointer; font: 700 13px system-ui; }
 @media (prefers-reduced-motion: reduce) { [data-resultboard-rejected] { transition: none; } }

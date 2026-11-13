@@ -7,7 +7,7 @@ button.active { color: white; border-color: transparent; background: linear-grad
 button.active.maybe { background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%); box-shadow: 0 2px 8px rgba(217, 119, 6, 0.25); }
 button.reject, button.restore { color: #dc2626; }
 .resultboard-reject-input { display: flex; gap: 6px; width: 100%; margin-top: 6px; }
-.resultboard-reject-input input { flex: 1; border: 1px solid var(--rb-border); border-radius: 6px; padding: 4px 8px; font: inherit; background: Canvas; color: CanvasText; transition: border-color .15s, box-shadow .15s; }
+.resultboard-reject-input input { flex: 1; border: 1px solid var(--rb-border); border-radius: 8px; padding: 4px 8px; font: inherit; background: Canvas; color: CanvasText; transition: border-color .15s, box-shadow .15s; }
 .resultboard-reject-input input:focus { outline: none; border-color: var(--rb-accent); box-shadow: 0 0 0 3px var(--rb-accent-glow); }
-.resultboard-reject-input button { padding: 4px 10px; border-radius: 6px; }
+.resultboard-reject-input button { padding: 4px 10px; border-radius: 8px; }
 @media (prefers-reduced-motion: reduce) { button { transition: none; } }

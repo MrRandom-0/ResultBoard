@@ -1,16 +1,16 @@
 body{width:330px}
-.popup{padding:16px}
+.popup{padding:var(--space-4)}
 .popup header{display:flex;align-items:center;justify-content:space-between}
-.project{margin:16px 0;padding:14px;border:1px solid var(--glass-border);border-radius:var(--card-radius);background:var(--glass-bg);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--shadow-md)}
+.project{margin:var(--space-4) 0;padding:14px;border:1px solid var(--glass-border);border-radius:var(--card-radius);background:var(--glass-bg);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--shadow-md)}
 .project>small{display:block;color:var(--muted);font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.08em}
 .project>strong{font-size:var(--text-xl);letter-spacing:var(--tracking-tight)}
 .project p{margin:8px 0 0;color:var(--muted);font-size:var(--text-sm)}
 .quick-counts{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:13px}
-.quick-counts span{padding:8px 4px;border-radius:10px;background:var(--gradient-accent-soft);color:var(--muted);text-align:center;font-size:var(--text-xs);border:1px solid var(--glass-border);transition:transform var(--transition-fast)}
+.quick-counts span{padding:8px 4px;border-radius:var(--radius-md);background:var(--gradient-accent-soft);color:var(--muted);text-align:center;font-size:var(--text-xs);border:1px solid var(--glass-border);transition:transform var(--transition-fast)}
 .quick-counts span:hover{transform:translateY(-1px)}
 .quick-counts b{display:block;color:var(--text);font-size:var(--text-lg);font-weight:700}
 .wide{display:flex;width:100%;align-items:center;justify-content:center;gap:7px;margin-top:7px}
 .popup-create{display:flex;gap:7px;margin-top:9px}.popup-create input{min-width:0;flex:1}.popup-create .button{flex:none}
 footer{display:flex;justify-content:space-between;margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
-footer button{display:flex;align-items:center;gap:5px;border:0;background:transparent;color:var(--muted);font-size:11px;transition:color var(--transition-fast)}
+footer button{display:flex;align-items:center;gap:5px;border:0;background:transparent;color:var(--muted);font-size:var(--text-xs);transition:color var(--transition-fast)}
 footer button:hover{color:var(--accent)}

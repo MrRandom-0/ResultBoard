@@ -600,6 +600,105 @@ describe('ResultBoardRepository', () => {
     });
   });
 
+  describe('bulkUpdateTags', () => {
+    const mockResult = (id: string): ParsedSearchResult => ({
+      url: `https://example.com/${id}`,
+      canonicalUrl: `https://example.com/${id}`,
+      title: `Page ${id}`,
+      snippet: 'snippet',
+      domain: 'example.com',
+      sourceQuery: 'query',
+    });
+
+    async function seedTwoRecords() {
+      const created = await repo.createProject('Test');
+      const projectId = created.activeProjectId!;
+      const withTag = await repo.createTag(projectId, 'Important', '#ff0000');
+      const tagId = withTag.tags[0]!.id;
+      await repo.classify(mockResult('a'), 'keep');
+      const s2 = await repo.classify(mockResult('b'), 'keep');
+      return { projectId, tagId, ids: s2.records.map((r) => r.id) };
+    }
+
+    it('adds a tag to many records at once', async () => {
+      const { tagId, ids } = await seedTwoRecords();
+      const state = await repo.bulkUpdateTags(ids, [tagId], 'add');
+      expect(state.records.every((r) => r.tagIds.includes(tagId))).toBe(true);
+    });
+
+    it('does not duplicate a tag that is already applied', async () => {
+      const { tagId, ids } = await seedTwoRecords();
+      await repo.bulkUpdateTags(ids, [tagId], 'add');
+      const state = await repo.bulkUpdateTags(ids, [tagId], 'add');
+      expect(state.records.every((r) => r.tagIds.filter((id) => id === tagId).length === 1)).toBe(true);
+    });
+
+    it('removes a tag from many records at once', async () => {
+      const { tagId, ids } = await seedTwoRecords();
+      await repo.bulkUpdateTags(ids, [tagId], 'add');
+      const state = await repo.bulkUpdateTags(ids, [tagId], 'remove');
+      expect(state.records.every((r) => !r.tagIds.includes(tagId))).toBe(true);
+    });
+
+    it('ignores tags that belong to another project', async () => {
+      const { ids } = await seedTwoRecords();
+      const other = await repo.createProject('Other');
+      const otherTag = await repo.createTag(other.activeProjectId!, 'Foreign', '#00ff00');
+      const foreignTagId = otherTag.tags.find((t) => t.name === 'Foreign')!.id;
+      const before = await repo.getState();
+      const target = before.records.filter((r) => ids.includes(r.id));
+      const state = await repo.bulkUpdateTags(ids, [foreignTagId], 'add');
+      for (const record of target) {
+        expect(state.records.find((r) => r.id === record.id)!.tagIds).toEqual(record.tagIds);
+      }
+    });
+
+    it('throws for empty record or tag lists', async () => {
+      await expect(repo.bulkUpdateTags([], ['t'], 'add')).rejects.toThrow('No records');
+      await expect(repo.bulkUpdateTags(['r'], [], 'add')).rejects.toThrow('No tags');
+    });
+
+    it('throws for more than 500 records', async () => {
+      const ids = Array.from({ length: 501 }, (_, i) => `id-${i}`);
+      await expect(repo.bulkUpdateTags(ids, ['t'], 'add')).rejects.toThrow('500');
+    });
+  });
+
+  describe('bulkRemoveRecords', () => {
+    const mockResult = (id: string): ParsedSearchResult => ({
+      url: `https://example.com/${id}`,
+      canonicalUrl: `https://example.com/${id}`,
+      title: `Page ${id}`,
+      snippet: 'snippet',
+      domain: 'example.com',
+      sourceQuery: 'query',
+    });
+
+    it('removes many records at once and keeps the rest', async () => {
+      await repo.createProject('Test');
+      await repo.classify(mockResult('a'), 'keep');
+      await repo.classify(mockResult('b'), 'keep');
+      const s3 = await repo.classify(mockResult('c'), 'keep');
+      const removeIds = s3.records.slice(0, 2).map((r) => r.id);
+      const state = await repo.bulkRemoveRecords(removeIds);
+      expect(state.records).toHaveLength(1);
+      expect(state.records[0]!.canonicalUrl).toBe('https://example.com/c');
+    });
+
+    it('ignores nonexistent record IDs silently', async () => {
+      await repo.createProject('Test');
+      const s1 = await repo.classify(mockResult('a'), 'keep');
+      const state = await repo.bulkRemoveRecords([s1.records[0]!.id, 'nonexistent-id']);
+      expect(state.records).toHaveLength(0);
+    });
+
+    it('throws for empty record list and for more than 500 records', async () => {
+      await expect(repo.bulkRemoveRecords([])).rejects.toThrow('No records');
+      const ids = Array.from({ length: 501 }, (_, i) => `id-${i}`);
+      await expect(repo.bulkRemoveRecords(ids)).rejects.toThrow('500');
+    });
+  });
+
   describe('comparison ratings', () => {
     it('stores validated per-criterion ratings on a result', async () => {
       const created = await repo.createProject('Compare');

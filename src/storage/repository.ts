@@ -4,6 +4,7 @@ import { migrateDatabase } from './migrations';
 import type { StorageDriver } from './driver';
 import { createId } from '../utils/id';
 import { ResultBoardError } from '../utils/errors';
+import { applyTagIds, tagChangeApplies, type TagChangeMode } from '../utils/bulk';
 
 const STORAGE_KEY = 'resultboard.database';
 
@@ -131,6 +132,41 @@ export class ResultBoardRepository {
           this.touchProject(state, record.projectId, timestamp);
         }
       }
+    });
+  }
+
+  async bulkUpdateTags(recordIds: string[], tagIds: string[], mode: TagChangeMode): Promise<StoredDatabase> {
+    if (recordIds.length === 0) throw new ResultBoardError('No records specified.', 'VALIDATION');
+    if (recordIds.length > 500) throw new ResultBoardError('Cannot update tags for more than 500 records at once.', 'VALIDATION');
+    if (tagIds.length === 0) throw new ResultBoardError('No tags specified.', 'VALIDATION');
+    return this.mutate((state) => {
+      const timestamp = this.now();
+      for (const recordId of recordIds) {
+        const record = state.records.find((item) => item.id === recordId);
+        if (!record) continue;
+        // Match updateRecord semantics: only tags belonging to the record's
+        // own project may ever land on it.
+        const validTagIds = tagIds.filter((tagId) => state.tags.some((tag) => tag.id === tagId && tag.projectId === record.projectId));
+        if (!tagChangeApplies(record.tagIds, validTagIds, mode)) continue;
+        record.tagIds = applyTagIds(record.tagIds, validTagIds, mode);
+        record.updatedAt = timestamp;
+        this.touchProject(state, record.projectId, timestamp);
+      }
+    });
+  }
+
+  async bulkRemoveRecords(recordIds: string[]): Promise<StoredDatabase> {
+    if (recordIds.length === 0) throw new ResultBoardError('No records specified.', 'VALIDATION');
+    if (recordIds.length > 500) throw new ResultBoardError('Cannot remove more than 500 records at once.', 'VALIDATION');
+    return this.mutate((state) => {
+      const ids = new Set(recordIds);
+      const removedProjectIds = new Set<string>();
+      state.records = state.records.filter((record) => {
+        if (!ids.has(record.id)) return true;
+        removedProjectIds.add(record.projectId);
+        return false;
+      });
+      for (const projectId of removedProjectIds) this.touchProject(state, projectId);
     });
   }
 

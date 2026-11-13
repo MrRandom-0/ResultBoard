@@ -22,6 +22,8 @@ export const requestSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('UNARCHIVE_PROJECT'), projectId: z.string() }).strict(),
   z.object({ type: z.literal('CLASSIFY_RESULT'), result: parsedResultSchema, status: resultStatusSchema, rejectionReason: z.string().max(500).optional() }).strict(),
   z.object({ type: z.literal('BULK_CLASSIFY'), recordIds: z.array(z.string()).min(1).max(500), status: resultStatusSchema, rejectionReason: z.string().max(500).optional() }).strict(),
+  z.object({ type: z.literal('BULK_UPDATE_TAGS'), recordIds: z.array(z.string()).min(1).max(500), tagIds: z.array(z.string()).min(1).max(100), mode: z.enum(['add', 'remove']) }).strict(),
+  z.object({ type: z.literal('BULK_REMOVE_RECORDS'), recordIds: z.array(z.string()).min(1).max(500) }).strict(),
   z.object({ type: z.literal('UPDATE_RECORD'), recordId: z.string(), patch: z.object({ status: resultStatusSchema.optional(), notes: z.string().optional(), tagIds: z.array(z.string()).optional(), rejectionReason: z.string().max(500).optional(), criterionScores: z.record(z.string(), z.number().min(0).max(5)).optional() }).strict() }).strict(),
   z.object({ type: z.literal('REMOVE_RECORD'), recordId: z.string() }).strict(),
   z.object({ type: z.literal('CREATE_TAG'), projectId: z.string(), name: z.string(), color: z.string() }).strict(),

@@ -83,6 +83,8 @@ export default defineBackground(() => {
             break;
           }
           case 'BULK_CLASSIFY': data = await repository.bulkClassify(request.recordIds, request.status, request.rejectionReason); break;
+          case 'BULK_UPDATE_TAGS': data = await repository.bulkUpdateTags(request.recordIds, request.tagIds, request.mode); break;
+          case 'BULK_REMOVE_RECORDS': data = await repository.bulkRemoveRecords(request.recordIds); break;
           case 'UPDATE_RECORD': data = await repository.updateRecord(request.recordId, withoutUndefined(request.patch)); break;
           case 'REMOVE_RECORD': data = await repository.removeRecord(request.recordId); break;
           case 'CREATE_TAG': data = await repository.createTag(request.projectId, request.name, request.color); break;
